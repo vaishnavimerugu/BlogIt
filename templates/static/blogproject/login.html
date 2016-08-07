@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+</head>
+<body class="container">
+    <form action="/blog/login/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input class="waves-effect waves-light btn blue darken-1" type="submit" value="Login" />
+        <br>
+        <p>Not a Member? Sign up!</p>
+        <a href="http://127.0.0.1:8000/blog/register/" class="waves-effect waves-light btn blue darken-1">Register</a>
+</form>
+</body>
+</html>

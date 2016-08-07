@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Compiled and minified CSS -->
+     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
+    <title>adding new post</title>
+</head>
+<body class="container">
+            <div id="displayform">
+
+            </div>
+            <script type="text/template" id="formcontainer">
+            <div class="input-field col s6">
+                <label for="title">Title</label>
+                <br>
+            <input id="title" type="text" class="validate">
+
+            </div>
+            <div class="input-field col s12">
+                <label for="content">Content</label>
+                <br>
+                <textarea id="content" class="materialize-textarea"></textarea>
+            </div>
+            <input id="addpost" class="waves-effect waves-light btn blue darken-1" type="submit" value="Add Post" />
+    </script>
+    <script>
+        var Blog=Backbone.Model.extend({
+            defaults:{
+                title:'',
+                blogpost:''
+            },
+            urlRoot:"/blog/post/"
+        });
+
+        var BlogView=Backbone.View.extend({
+
+            initialize:function () {
+                this.render();
+            },
+            events:
+            {
+                'click #addpost': 'addpost'
+            },
+            render:function () {
+                var variables={};
+                 var template=_.template($("#formcontainer").html(),variables);
+                console.log(this.$el)
+                this.$el.html(template);
+            },
+            addpost:function()
+            {
+                newBlog=new Blog({title:$("#title").val(),blogpost:$("#content").val()});
+                console.log(newBlog.attributes.title,newBlog.attributes.blogpost);
+                newBlog.save({},{
+                    success:function(data)
+                    {
+                        window.location.href='/blog/userhome/'
+                    },
+                    error:function(data)
+                    {
+                        console.log('error')
+                        console.log(data)
+                    }
+
+                });
+            }
+
+        });
+        var newBlogView=new BlogView({el:$("#displayform")});
+    </script>
+</body>
+</html>

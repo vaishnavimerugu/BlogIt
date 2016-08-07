@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
+  </head>
+<body>
+
+
+    <nav>
+    <div class="nav-wrapper blue darken-1">
+      <a href="#" class="brand-logo">Blog It!</a>
+      <ul class="right hide-on-med-and-down">
+          {% if user.is_authenticated %}
+        <li><a href="/blog/logout/"><i class="material-icons left">perm_identity</i>Logout</a></li>
+          {% else %}
+          <li><a href="/blog/login/"><i class="material-icons left">input</i>Login</a></li>
+        <li><a href="/blog/register/"><i class="material-icons left">perm_identity</i>Register</a></li>
+     {% endif %}
+      </ul>
+    </div>
+  </nav>
+    <br>
+    {% if user.is_authenticated %}
+    <a href="/blog/newpost" class="btn-floating btn-large waves-effect waves-light blue darken-1"><i class="material-icons">add</i></a>
+    {% endif %}
+
+    <div id="displayform">
+
+            </div>
+            <script type="text/template" id="formcontainer">
+
+            <% _.each(blogs,function(blog){ %>
+            <div class="row">
+                <div class="col s12 m6">
+                  <div class="card ">
+                    <div class="card-content ">
+                      <span class="card-title">
+                        <%= blog.attributes.title %></span>
+                      <p>
+                    <%= blog.attributes.blogpost %>.</p>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+            </script>
+    <script>
+    var Blog=Backbone.Model.extend({
+            defaults:{
+                title:'',
+                blogpost:'',
+                user:''
+            },
+            urlRoot:"/blog/post/"
+        });
+    var Blogs = Backbone.Collection.extend({
+        url:'/blog/all_blogs/'
+    })
+    var BlogView=Backbone.View.extend({
+
+            initialize:function () {
+                var self = this
+                this.all_blogs =new  Blogs()
+                this.all_blogs.fetch({
+                    success:function(data)
+                    {
+                        console.log(data)
+                        self.render()
+                    }
+
+                })
+            },
+            events:
+            {
+                'click #addpost': 'addpost'
+            },
+            render:function () {
+                var variables={blogs:this.all_blogs.models};
+                 var template=_.template($("#formcontainer").html(),variables);
+                console.log(this.$el)
+                this.$el.html(template);
+            },
+            addpost:function()
+            {
+                newBlog=new Blog({title:$("#title").val(),blogpost:$("#content").val()});
+                console.log(newBlog.attributes.title,newBlog.attributes.blogpost);
+                newBlog.save({},{
+                    success:function(data)
+                    {
+                        window.location.href='/blog/userhome/'
+                    },
+                    error:function(data)
+                    {
+                        console.log('error')
+                        console.log(data)
+                    }
+
+                });
+            }
+
+        });
+        var newBlogView=new BlogView({el:$("#displayform")});
+
+</script>
+</body>
+</html>
